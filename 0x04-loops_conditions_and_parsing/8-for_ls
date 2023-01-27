@@ -5,4 +5,4 @@ files="$(ls)"
 for f in $files;
 do
     echo "$f" | cut -d "-" -f2
-done n 
+done 
