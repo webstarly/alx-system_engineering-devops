@@ -2,7 +2,10 @@
 # Read file and manipulate fields to generate story
 
 FILE="/etc/passwd"
+<<<<<<< HEAD
 
+=======
+>>>>>>> 284a9926aa3e5dbbc668746d67a6e17784e65965
 while IFS=":" read -r user pw uid gid uinfo homedir shell
 do
     echo "The user $user is part of the $gid gang, lives in $homedir and \

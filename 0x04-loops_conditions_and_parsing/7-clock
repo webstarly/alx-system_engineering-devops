@@ -6,7 +6,10 @@ while [ "$h" -le 12 ]
 do
     echo "Hour: $h"
     (( h++ ))
+<<<<<<< HEAD
 
+=======
+>>>>>>> 284a9926aa3e5dbbc668746d67a6e17784e65965
     m=1
     while [ "$m" -le 59 ]
     do
