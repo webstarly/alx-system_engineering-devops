@@ -1,10 +1,30 @@
 #!/usr/bin/env bash
-# This script installs a load balancer haproxy and configures it
+#script that installs and configires a new ubuntu server with a HAproxy load balancer to distribute traffic amongst two webservers
 
-sudo apt-get -y install --no-install-recommends software-properties-common
-sudo add-apt-repository -y ppa:vbernat/haproxy-2.6
-sudo apt-get -y update
-sudo apt-get -y install haproxy
-sed -i -e '$aENABLED=1\n' /etc/default/haproxy
-sed -i -e '$a\listen balancer\n\tbind :80\n\tbalance roundrobin\n\tserver 148057-web-01 100.25.33.197 check\n\tserver 148057-web-02 54.90.12.51 check\n' /etc/haproxy/haproxy.cfg
-sudo service haproxy start
+sudo sed -i '3i\54.90.25.246 Haproxy\n100.25.33.197 148057-web-01\n54.90.12.51 148057-web-02' /etc/hosts
+
+#update required repositories
+sudo apt update -y
+#install haproxy load balancer
+sudo apt-get install --no-install-recommends software-properties-common -y
+sudo add-apt-repository ppa:vbernat/haproxy-2.6 -y
+sudo apt-get install haproxy=2.6.\* -y
+
+#configure HAproxy to distribute traffic to two web servers using round robin algorithm in /etc/haproxy/haproxy.cfg file
+sudo cp -a /etc/haproxy/haproxy.cfg{,.original}
+
+echo '#HAproxy for web servers' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'frontend web-frontend' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'bind *:80' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'mode http' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'default_backend web-backend' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'backend web-backend' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'balance roundrobin' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'server 148057-web-01 100.25.33.197:80 check' | sudo tee -a /etc/haproxy/haproxy.cfg
+echo 'server 148057-web-02 54.90.12.51:80 check' | sudo tee -a /etc/haproxy/haproxy.cfg
+
+
+echo 'ENABLED=1' | sudo tee -a /etc/default/haproxy
+
+#restart the load balancer
+sudo service haproxy restart
