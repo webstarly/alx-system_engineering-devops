@@ -1,14 +1,39 @@
 #!/usr/bin/env bash
-# This script configures the Nginx server with a custom header
+# install nginx on web-01 server
+# Nginx should listen on port 80
+#When querying Nginx at its root / with a GET request (requesting a page)
+#using curl, it must return a page that contains the string Hello World!
+#redirect /redirect_me to another page permanently
 
-sudo apt-get -y update
-sudo apt-get -y install nginx
+#update all package repositories
+sudo apt update -y
+
+# install nginx and start it
+sudo apt install nginx -y
+
+# firewall setting: allow nginx to serve on port 80
 sudo ufw allow 'Nginx HTTP'
-sudo chown -R "$USER":"$USER" /var/www
-echo "Hello World!" > /var/www/html/index.nginx-debian.html
-sudo sed -i "/server_name _;/ a\\\trewrite ^/redirect_me http://www.google.com permanent;" /etc/nginx/sites-available/default
-sudo mkdir -p /var/www/error
-echo "Ceci n'est pas une page" | sudo tee /var/www/error/404.html
-sudo sed -i '/server_name _/a error_page 404 /404.html; location = /404.html {root /var/www/error/;internal; }' /etc/nginx/sites-available/default
-sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOSTNAME\";/"  /etc/nginx/sites-available/default
-sudo service nginx start
+
+# replace the content of the served page
+echo "Hello World!" | sudo tee /var/www/html/index.html
+
+
+# grant user ownership of the web files
+
+sudo chown -R "$USER":"$USER" /var/www/html
+sudo chmod -R 755 /var/www
+
+
+# redirect /redirect_me to youtube video
+sudo sed -i '38i\rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
+
+#message to be served when file requested is not found
+echo "Ceci n'est pas une page" | sudo tee /usr/share/nginx/html/custom_404.html
+
+#configure Nginx server to use error page
+sudo sed -i '40i\error_page 404 /custom_404.html; location = /custom_404.html { root /usr/share/nginx/html; internal;}' /etc/nginx/sites-available/default
+
+# configure Nginx with a custom http response header
+sudo sed -i '30i\add_header X-Served-By $hostname;' /etc/nginx/sites-available/default
+
+sudo service nginx restart
