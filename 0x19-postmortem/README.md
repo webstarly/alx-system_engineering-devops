@@ -1,4 +1,4 @@
-ssue Summary: On May 7th, 2023, at 2:00 PM WAT, the Nginx server hosting our company's website experienced an outage that lasted for 2 hours. During this time, users were unable to access the website, resulting in a 100% outage rate.0
+Issue Summary: On May 7th, 2023, at 2:00 PM WAT, the Nginx server hosting our company's website experienced an outage that lasted for 2 hours. During this time, users were unable to access the website, resulting in a 100% outage rate.0
 
 Root Cause: The root cause of the outage was a configuration issue in the Nginx server that caused it to crash when handling a sudden spike in traffic. This was due to an incorrect setting in the server configuration file that was not caught during the testing phase.
 
